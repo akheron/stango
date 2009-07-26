@@ -2,14 +2,68 @@ import os
 import shutil
 import sys
 import traceback
+from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
-def serve(files, port):
+class StangoRequestHandler(BaseHTTPRequestHandler):
+    def start_response(self, code, headers=[]):
+        if code == 200:
+            self.send_response(200)
+            for header in headers:
+                keyword, value = header.split(': ')
+                self.send_header(keyword, value)
+            self.end_headers()
+        else:
+            self.send_response(code)
+
+    def serve_static_file(self, path):
+        if os.path.isfile(os.path.join('static', path)):
+            self.start_response(200)
+            with open(os.path.join('static', path)) as fobj:
+                self.wfile.write(fobj.read())
+                return True
+        else:
+            return False
+
+    def do_GET(self):
+        # remove the leading /
+        path = self.path[1:]
+
+        if self.serve_static_file(path):
+            return
+
+        if not path or path.endswith('/'):
+            realpath = os.path.join(path, self.server.index_file)
+        else:
+            realpath = path
+
+        for file in self.server.files:
+            if file.realpath == realpath:
+                self.start_response(
+                    200, ['Content-Type: text/html; charset=UTF-8'])
+                self.wfile.write(file.view(**file.kwargs))
+                break
+        else:
+            self.start_response(404)
+            self.wfile.write('Not found: %s' % self.path)
+
+
+class StangoHTTPServer(HTTPServer):
+    def __init__(self, server_address, files, index_file):
+        self.files = files
+        self.index_file = index_file
+        HTTPServer.__init__(self, server_address, StangoRequestHandler)
+
+
+def serve(files, index_file, port):
     if port < 0 or port > 65535:
         print >>sys.stderr, 'Unable to serve on invalid port %r' % port
         return 1
 
-    print >>sys.stderr, 'Not implemented'
-    return 1
+    addr = '127.0.0.1'
+
+    print 'Starting server on on http://%s:%d/' % (addr, port)
+    httpd = StangoHTTPServer((addr, port), files, index_file)
+    httpd.serve_forever()
 
 
 def render(files, outdir):
@@ -65,8 +119,11 @@ def run(files_module):
     files = files_module.files
 
     if hasattr(files_module, 'index_file'):
+        index_file = files_module.index_file
         for file in files:
-            file.complete(files_module.index_file)
+            file.complete(index_file)
+    else:
+        index_file = None
 
     if len(sys.argv) < 2 or sys.argv[1] not in ['serve', 'render']:
         print_help()
@@ -82,7 +139,7 @@ def run(files_module):
         else:
             print_help()
 
-        sys.exit(serve(files, port) or 0)
+        sys.exit(serve(files, index_file, port) or 0)
 
     elif sys.argv[1] == 'render':
         if len(sys.argv) == 2:
