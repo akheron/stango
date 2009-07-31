@@ -1,7 +1,7 @@
+import errno
 import os
 import shutil
 import sys
-import traceback
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 class StangoRequestHandler(BaseHTTPRequestHandler):
@@ -26,15 +26,13 @@ class StangoRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         # remove the leading /
-        path = self.path[1:]
+        realpath = path = self.path[1:]
 
         if self.serve_static_file(path):
             return
 
-        if not path or path.endswith('/'):
+        if self.server.index_file and (not path or path.endswith('/')):
             realpath = os.path.join(path, self.server.index_file)
-        else:
-            realpath = path
 
         for file in self.server.files:
             if file.realpath == realpath:
@@ -44,7 +42,6 @@ class StangoRequestHandler(BaseHTTPRequestHandler):
                 break
         else:
             self.start_response(404)
-            self.wfile.write('Not found: %s' % self.path)
 
 
 class StangoHTTPServer(HTTPServer):
@@ -54,7 +51,7 @@ class StangoHTTPServer(HTTPServer):
         HTTPServer.__init__(self, server_address, StangoRequestHandler)
 
 
-def serve(files, index_file, port):
+def serve(config, port):
     if port < 0 or port > 65535:
         print >>sys.stderr, 'Unable to serve on invalid port %r' % port
         return 1
@@ -62,11 +59,12 @@ def serve(files, index_file, port):
     addr = '127.0.0.1'
 
     print 'Starting server on on http://%s:%d/' % (addr, port)
-    httpd = StangoHTTPServer((addr, port), files, index_file)
+    httpd = StangoHTTPServer((addr, port),
+                             config['files'], config['index_file'])
     httpd.serve_forever()
 
 
-def render(files, outdir):
+def render(config, outdir):
     if os.path.exists(outdir):
         if os.path.isdir(outdir):
             shutil.rmtree(outdir)
@@ -75,13 +73,19 @@ def render(files, outdir):
             return 1
 
     if os.path.isdir('static'):
-        shutil.copytree('static', 'out')
+        shutil.copytree('static', outdir)
 
-    for file in files:
+    try:
+        os.mkdir(outdir)
+    except OSError, err:
+        if err.errno != errno.EEXIST:
+            raise
+
+    for file in config['files']:
         path = os.path.join(outdir, file.realpath)
 
         if os.path.exists(path):
-            print >>sys.stderr, '%r exists in both static/ and files.py' % \
+            print >>sys.stderr, '%r exists in both static/ and files list' % \
                 file.realpath
 
         if not os.path.exists(os.path.dirname(path)):
@@ -93,63 +97,4 @@ def render(files, outdir):
         finally:
             fobj.close()
 
-
-def print_help():
-        print '''\
-usage: %s subcmd [args...]
-
-subcommands:
-    serve [port]
-
-        Serve the pages on http://localhost:<port>/. <port> defaults
-        to 8080.
-
-    render [outdir]
-
-        Render the pages as flat files to directory <outdir>, which
-        defaults to 'out'.
-''' % sys.argv[0]
-        sys.exit(2)
-
-
-def run(files_module):
-    if not hasattr(files_module, 'files'):
-        print >>sys.stderr, "'files.py' doesn't define the 'files' variable"
-        sys.exit(1)
-    files = files_module.files
-
-    if hasattr(files_module, 'index_file'):
-        index_file = files_module.index_file
-        for file in files:
-            file.complete(index_file)
-    else:
-        index_file = None
-
-    if len(sys.argv) < 2 or sys.argv[1] not in ['serve', 'render']:
-        print_help()
-
-    if sys.argv[1] == 'serve':
-        if len(sys.argv) == 2:
-            port = 8080
-        elif len(sys.argv) == 3:
-            try:
-                port = int(sys.argv[2])
-            except ValueError:
-                print_help()
-        else:
-            print_help()
-
-        sys.exit(serve(files, index_file, port) or 0)
-
-    elif sys.argv[1] == 'render':
-        if len(sys.argv) == 2:
-            outdir = 'out'
-        elif len(sys.argv) == 3:
-            outdir = sys.argv[2]
-        else:
-            print_help()
-
-        sys.exit(render(files, outdir) or 0)
-
-    else:
-        print_usage()
+    return 0

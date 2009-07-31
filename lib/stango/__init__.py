@@ -1,6 +1,4 @@
 import os
-import manage
-import views
 
 class File(object):
     def __init__(self, path, view, kwargs):
