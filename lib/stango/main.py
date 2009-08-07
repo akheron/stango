@@ -30,23 +30,26 @@ files = stango.files(
 
 def print_help():
         print '''\
-usage: %s subcmd [args...]
+usage: %s COMMAND [ARGS...]
 
-subcommands:
-    render [outdir]
+Available commands:
 
-        Render the pages as flat files to directory <outdir>. (The
-        default is "out".)
+    render [OUTDIR]
 
-    serve [port]
+        Render the pages as flat files to directory OUTDIR
+        (default: out). If OUTDIR doesn't exist, it is
+        created, and if it already exists, it is cleared
+        first.
 
-        Serve the pages on http://localhost:<port>/. (The default port
-        is 8080).
+    serve [[HOST:]PORT]
+
+        Serve the pages on http://HOST:PORT/ (default:
+        127.0.0.1:8000).
 
     quickstart
 
-        Initialize a boilerplate example project in the current
-        directory.
+        Initialize a boilerplate example project in the
+        current directory.
 ''' % sys.argv[0]
         sys.exit(2)
 
@@ -89,17 +92,21 @@ def run():
             file.complete(config['index_file'])
 
     if sys.argv[1] == 'serve':
-        if len(sys.argv) == 2:
-            port = 8080
-        elif len(sys.argv) == 3:
+        host = '127.0.0.1'
+        port = 8000
+        if len(sys.argv) == 3:
+            if ':' in sys.argv[2]:
+                host, port = sys.argv[2].split(':')
+            else:
+                port = sys.argv[2]
             try:
-                port = int(sys.argv[2])
+                port = int(port)
             except ValueError:
                 print_help()
-        else:
+        elif len(sys.argv) > 3:
             print_help()
 
-        sys.exit(stango.manage.serve(config, port))
+        sys.exit(stango.manage.serve(config, host, port))
 
     elif sys.argv[1] == 'render':
         if len(sys.argv) == 2:

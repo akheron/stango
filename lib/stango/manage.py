@@ -51,15 +51,13 @@ class StangoHTTPServer(HTTPServer):
         HTTPServer.__init__(self, server_address, StangoRequestHandler)
 
 
-def serve(config, port):
+def serve(config, host, port):
     if port < 0 or port > 65535:
         print >>sys.stderr, 'Unable to serve on invalid port %r' % port
         return 1
 
-    addr = '127.0.0.1'
-
-    print 'Starting server on on http://%s:%d/' % (addr, port)
-    httpd = StangoHTTPServer((addr, port),
+    print 'Starting server on on http://%s:%d/' % (host, port)
+    httpd = StangoHTTPServer((host, port),
                              config['files'], config['index_file'])
     httpd.serve_forever()
 
