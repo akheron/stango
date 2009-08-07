@@ -56,10 +56,14 @@ def serve(config, host, port):
         print >>sys.stderr, 'Unable to serve on invalid port %r' % port
         return 1
 
-    print 'Starting server on on http://%s:%d/' % (host, port)
-    httpd = StangoHTTPServer((host, port),
-                             config['files'], config['index_file'])
-    httpd.serve_forever()
+    def do_serve():
+        print 'Starting server on on http://%s:%d/' % (host, port)
+        httpd = StangoHTTPServer((host, port),
+                                 config['files'], config['index_file'])
+        httpd.serve_forever()
+
+    from stango.manage import autoreload
+    autoreload.main(do_serve)
 
 
 def render(config, outdir):
