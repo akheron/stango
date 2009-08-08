@@ -61,6 +61,7 @@ h1 { color: #0c0; }
     print 'Now run "stango serve" or "stango render"'
     return 0
 
+
 def print_help():
         print '''\
 usage: %s COMMAND [ARGS...]
@@ -153,5 +154,3 @@ def run():
 
     else:
         print_usage()
-
-
