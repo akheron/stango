@@ -5,27 +5,60 @@ import stango.manage
 def quickstart():
     conf_code = '''\
 import stango
+import views
 
 index_file = 'index.html'
 
 files = stango.files(
-    # Example:
-    # ('index.html', my_views.index),
-    # ('foo/', my_views.page, {'name': 'foo'}),
+    ('', views.hello, { 'message': 'Hello, World!', 'link': 'greeting.html' }),
+    ('greeting.html', views.hello, { 'message': 'Greetings, World!', 'link': 'index.html' }),
 )
+'''
+
+    views_code = '''\
+from stango.shortcuts import render_template
+
+def hello(message, link):
+    return render_template('hello.html', message=message, link=link)
+'''
+
+    hello_template = '''\
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>{{ message }}</title>
+    <link rel="stylesheet" type="text/css" href="hello.css">
+  </head>
+  <body>
+    <h1>{{ message }}</h1>
+    Another greeting <a href="{{ link }}">here</a>.
+  </body>
+</html>
+'''
+
+    hello_css = '''\
+h1 { color: #0c0; }
 '''
 
     init_files = [
         ('__init__.py', '', 0644),
         ('conf.py', conf_code, 0644),
+        ('views.py', views_code, 0644),
+        ('static/hello.css', hello_css, 0644),
+        ('templates/hello.html', hello_template, 0644),
     ]
 
     for filename, contents, mode in init_files:
+        print 'Creating %s' % filename
+        dirname = os.path.dirname(filename)
+        if dirname and not os.path.exists(dirname):
+            os.makedirs(dirname)
         fobj = open(filename, 'w')
         fobj.write(contents)
         fobj.close()
         os.chmod(filename, mode)
 
+    print 'Now run "stango serve" or "stango render"'
     return 0
 
 def print_help():
