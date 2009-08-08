@@ -1,6 +1,6 @@
 import os
 
-def render_to_template(template_name, **kwargs):
+def render_template(template_name, **kwargs):
     from jinja2 import Environment, FileSystemLoader
 
     env = Environment(loader=FileSystemLoader('templates'))
