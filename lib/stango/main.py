@@ -90,6 +90,7 @@ Available commands:
 
 CONFIG_DEFAULTS = {
     'index_file': None,
+    'autoreload': [],
 }
 
 def run():

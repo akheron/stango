@@ -63,7 +63,7 @@ def serve(config, host, port):
         httpd.serve_forever()
 
     from stango.manage import autoreload
-    autoreload.main(do_serve)
+    autoreload.main(do_serve, config['autoreload'])
 
 
 def render(config, outdir):
