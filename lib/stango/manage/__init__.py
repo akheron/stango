@@ -67,6 +67,7 @@ def serve(config, host, port):
 
 
 def render(config, outdir):
+    print 'Rendering to %s...' % outdir
     if os.path.exists(outdir):
         if os.path.isdir(outdir):
             shutil.rmtree(outdir)
@@ -87,7 +88,8 @@ def render(config, outdir):
         path = os.path.join(outdir, file.realpath)
 
         if os.path.exists(path):
-            print >>sys.stderr, '%r exists in both static/ and files list' % \
+            print >>sys.stderr, \
+                'Warning: %r exists in both static/ and files list' % \
                 file.realpath
 
         if not os.path.exists(os.path.dirname(path)):
@@ -99,4 +101,5 @@ def render(config, outdir):
         finally:
             fobj.close()
 
+    print 'done.'
     return 0
