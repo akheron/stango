@@ -87,7 +87,9 @@ _mtimes = {}
 _win = (sys.platform == "win32")
 
 def code_files():
-    return filter(lambda v: v, map(lambda m: getattr(m, "__file__", None), sys.modules.values()))
+    return \
+        [os.path.abspath('conf.py')] + \
+        filter(lambda v: v, map(lambda m: getattr(m, "__file__", None), sys.modules.values()))
 
 def matching_files(patterns):
     for pattern in patterns:
