@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(
-    name='stango',
+    name='Stango',
     version='0.1',
     author='Petri Lehtinen',
     author_email='petri@digip.org',
@@ -18,4 +18,5 @@ to flat files and can be pushed to a production server.''',
     license='MIT',
     package_dir={'': 'lib'},
     packages=['stango', 'stango.manage'],
+    scripts=['bin/stango'],
 )
