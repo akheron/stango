@@ -42,8 +42,8 @@ class StangoRequestHandler(BaseHTTPRequestHandler):
 
         for file in self.server.files:
             if file.realpath == realpath:
-                self.start_response(
-                    200, ['Content-Type: text/html; charset=UTF-8'])
+                headers = []
+                self.start_response(200)
                 self.wfile.write(file.view(**file.kwargs))
                 break
         else:
