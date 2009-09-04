@@ -16,9 +16,12 @@ class StangoRequestHandler(BaseHTTPRequestHandler):
             self.send_response(code)
 
     def serve_static_file(self, path):
-        if os.path.isfile(os.path.join('static', path)):
+        path = os.path.join('static', path)
+        if not os.path.isfile(path):
+            path = os.path.join(path, self.server.index_file)
+        if os.path.isfile(path):
             self.start_response(200)
-            fobj = open(os.path.join('static', path))
+            fobj = open(path)
             try:
                 self.wfile.write(fobj.read())
             finally:
