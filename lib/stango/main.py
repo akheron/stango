@@ -89,8 +89,9 @@ Available commands:
 
 
 CONFIG_DEFAULTS = {
-    'index_file': None,
     'autoreload': [],
+    'index_file': None,
+    'post_render_hook': None,
 }
 
 def run():

@@ -90,6 +90,11 @@ def render(config, outdir):
         if err.errno != errno.EEXIST:
             raise
 
+    post_render_hook = config['post_render_hook']
+    if post_render_hook and not callable(post_render_hook):
+        print >>sys.stderr, 'Error: post_render_hook must be callable'
+        return 1
+
     for file in config['files']:
         path = os.path.join(outdir, file.realpath)
 
@@ -103,7 +108,13 @@ def render(config, outdir):
 
         fobj = open(path, 'w')
         try:
-            fobj.write(file.view(**file.kwargs))
+            data = file.view(**file.kwargs)
+            if post_render_hook:
+                data = post_render_hook(file.realpath, data)
+                if not isinstance(data, basestring):
+                    print >>sys.stderr, 'Warning: post_render_hook returned a non-string for %s, writing an empty file' % file.realpath
+                    data = ''
+            fobj.write(data)
         finally:
             fobj.close()
 
