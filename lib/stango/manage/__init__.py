@@ -63,7 +63,7 @@ def serve(config, host, port):
         return 1
 
     def do_serve():
-        print 'Starting server on on http://%s:%d/' % (host, port)
+        print 'Starting server on http://%s:%d/' % (host, port)
         httpd = StangoHTTPServer((host, port),
                                  config['files'], config['index_file'])
         httpd.serve_forever()
