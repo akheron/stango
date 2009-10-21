@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(
-    name='Stango',
+    name='stango',
     version='0.1',
     author='Petri Lehtinen',
     author_email='petri@digip.org',
