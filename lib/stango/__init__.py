@@ -1,6 +1,7 @@
 import operator
 import os
 import tarfile
+from stango.views import file_from_tar
 
 class File(object):
     def __init__(self, path, view, kwargs):
@@ -37,27 +38,23 @@ class files(list):
         super(files, self).__init__()
         self.extend(list(self._files(args)))
 
-
-def view_file_from_tar(tar, member):
-    return tar.extractfile(member).read()
-
-
-def files_from_tar(basepath, tarname, strip=0):
-    tar = tarfile.open(tarname, 'r')
-    def _files():
-        for member in tar.getmembers():
-            if not member.isfile():
-                continue
-            if strip > 0:
-                parts = member.name.split('/')[strip:]
-                if not parts:
+    @staticmethod
+    def from_tar(basepath, tarname, strip=0):
+        tar = tarfile.open(tarname, 'r')
+        def _gen():
+            for member in tar.getmembers():
+                if not member.isfile():
                     continue
-                served_name = os.path.join(*parts)
-            else:
-                served_name = member.name
-            filename = os.path.join(basepath, served_name)
-            yield files((
-                    filename,
-                    view_file_from_tar,
-                    { 'tar': tar, 'member': member.name }))
-    return reduce(operator.add, _files())
+                if strip > 0:
+                    parts = member.name.split('/')[strip:]
+                    if not parts:
+                        continue
+                    served_name = os.path.join(*parts)
+                else:
+                    served_name = member.name
+                filename = os.path.join(basepath, served_name)
+                yield files((
+                        filename,
+                        file_from_tar,
+                        { 'tar': tar, 'member': member.name }))
+        return reduce(operator.add, _gen())
