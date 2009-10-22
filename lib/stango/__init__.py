@@ -14,10 +14,8 @@ class File(object):
             self.realpath = os.path.join(self.path, index_file)
 
 
-def files(*args):
-    import os
-
-    def _files(*args):
+class files(list):
+    def _files(self, args):
         for i, arg in enumerate(args):
             if not isinstance(arg, tuple):
                 raise ValueError('argument %d is not a tuple' % i)
@@ -35,7 +33,9 @@ def files(*args):
 
             yield File(path, view, kwargs)
 
-    return list(_files(*args))
+    def __init__(self, *args):
+        super(files, self).__init__()
+        self.extend(list(self._files(args)))
 
 
 def view_file_from_tar(tar, member):
