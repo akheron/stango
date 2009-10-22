@@ -15,27 +15,9 @@ class StangoRequestHandler(BaseHTTPRequestHandler):
         else:
             self.send_response(code)
 
-    def serve_static_file(self, path):
-        path = os.path.join('static', path)
-        if not os.path.isfile(path):
-            path = os.path.join(path, self.server.index_file)
-        if os.path.isfile(path):
-            self.start_response(200)
-            fobj = open(path)
-            try:
-                self.wfile.write(fobj.read())
-            finally:
-                fobj.close()
-            return True
-        else:
-            return False
-
     def do_GET(self):
         # remove the leading /
         realpath = path = self.path[1:]
-
-        if self.serve_static_file(path):
-            return
 
         if self.server.index_file and (not path or path.endswith('/')):
             realpath = os.path.join(path, self.server.index_file)
@@ -81,9 +63,6 @@ def render(config, outdir):
             print >>sys.stderr, '%r is not a directory' % outdir
             return 1
 
-    if os.path.isdir('static'):
-        shutil.copytree('static', outdir)
-
     try:
         os.mkdir(outdir)
     except OSError, err:
@@ -97,11 +76,6 @@ def render(config, outdir):
 
     for file in config['files']:
         path = os.path.join(outdir, file.realpath)
-
-        if os.path.exists(path):
-            print >>sys.stderr, \
-                'Warning: %r exists in both static/ and files list' % \
-                file.realpath
 
         if not os.path.exists(os.path.dirname(path)):
             os.makedirs(os.path.dirname(path))

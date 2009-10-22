@@ -1,7 +1,7 @@
 import operator
 import os
 import tarfile
-from stango.views import file_from_tar
+from stango.views import file_from_tar, static_file
 
 class File(object):
     def __init__(self, path, view, kwargs):
@@ -39,22 +39,40 @@ class files(list):
         self.extend(list(self._files(args)))
 
     @staticmethod
+    def _served_path(basepath, filename, strip):
+        if strip > 0:
+            parts = filename.split('/')[strip:]
+            if not parts:
+                return ''
+            served_name = os.path.join(*parts)
+        else:
+            served_name = filename
+        return os.path.join(basepath, served_name)
+
+
+    @staticmethod
     def from_tar(basepath, tarname, strip=0):
         tar = tarfile.open(tarname, 'r')
         def _gen():
             for member in tar.getmembers():
                 if not member.isfile():
                     continue
-                if strip > 0:
-                    parts = member.name.split('/')[strip:]
-                    if not parts:
-                        continue
-                    served_name = os.path.join(*parts)
-                else:
-                    served_name = member.name
-                filename = os.path.join(basepath, served_name)
-                yield files((
-                        filename,
-                        file_from_tar,
-                        { 'tar': tar, 'member': member.name }))
+                filename = files._served_path(basepath, member.name, strip)
+                if filename:
+                    yield files((
+                            filename,
+                            file_from_tar,
+                            { 'tar': tar, 'member': member.name }))
+        return reduce(operator.add, _gen())
+
+    @staticmethod
+    def from_dir(basepath, dir_, strip=0):
+        def _gen():
+            for dirpath, dirnames, filenames in os.walk(dir_):
+                for filename in filenames:
+                    path = os.path.join(dirpath, filename)
+                    yield files((
+                            files._served_path(basepath, path, strip),
+                            static_file,
+                            { 'path': os.path.join(dirpath, filename) }))
         return reduce(operator.add, _gen())
