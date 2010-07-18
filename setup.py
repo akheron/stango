@@ -16,7 +16,6 @@ During development, the pages are served locally using a built-in web
 server with all URLs working. When they site is ready, it is rendered
 to flat files and can be pushed to a production server.''',
     license='MIT',
-    package_dir={'': 'lib'},
     packages=['stango', 'stango.manage'],
     scripts=['bin/stango'],
 )
