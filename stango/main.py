@@ -41,15 +41,15 @@ h1 { color: #0c0; }
 '''
 
     init_files = [
-        ('__init__.py', '', 0644),
-        ('conf.py', conf_code, 0644),
-        ('views.py', views_code, 0644),
-        ('static/hello.css', hello_css, 0644),
-        ('templates/hello.html', hello_template, 0644),
+        ('__init__.py', '', 0o644),
+        ('conf.py', conf_code, 0o644),
+        ('views.py', views_code, 0o644),
+        ('static/hello.css', hello_css, 0o644),
+        ('templates/hello.html', hello_template, 0o644),
     ]
 
     for filename, contents, mode in init_files:
-        print 'Creating %s' % filename
+        print('Creating %s' % filename)
         dirname = os.path.dirname(filename)
         if dirname and not os.path.exists(dirname):
             os.makedirs(dirname)
@@ -58,12 +58,12 @@ h1 { color: #0c0; }
         fobj.close()
         os.chmod(filename, mode)
 
-    print 'Now run "stango serve" or "stango render"'
+    print('Now run "stango serve" or "stango render"')
     return 0
 
 
 def print_help():
-        print '''\
+        print('''\
 usage: %s COMMAND [ARGS...]
 
 Available commands:
@@ -84,7 +84,7 @@ Available commands:
 
         Initialize a boilerplate example project in the
         current directory.
-''' % sys.argv[0]
+''' % sys.argv[0])
         sys.exit(2)
 
 
@@ -105,22 +105,22 @@ def run():
         sys.exit(quickstart())
 
     if not os.path.exists('conf.py'):
-        print >>sys.stderr, 'conf.py not found'
+        print('conf.py not found', file=sys.stderr)
         sys.exit(1)
 
     try:
         backup = sys.path
         sys.path = [''] + sys.path
         config = {}
-        execfile('conf.py', config)
+        exec(open('conf.py').read(), config)
     finally:
         sys.path = backup
 
-    for k, v in CONFIG_DEFAULTS.items():
+    for k, v in list(CONFIG_DEFAULTS.items()):
         config.setdefault(k, v)
 
     if not 'files' in config:
-        print >>sys.stderr, "'files.py' doesn't define the 'files' variable"
+        print("'files.py' doesn't define the 'files' variable", file=sys.stderr)
         sys.exit(1)
 
     if config['index_file']:

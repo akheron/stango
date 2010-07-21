@@ -2,6 +2,7 @@ import operator
 import os
 import tarfile
 from stango.views import file_from_tar, static_file
+from functools import reduce
 
 class File(object):
     def __init__(self, path, view, kwargs):
@@ -29,7 +30,7 @@ class files(list):
             else:
                 path, view, kwargs = arg
 
-            if not isinstance(path, basestring) or path.startswith('/'):
+            if not isinstance(path, str) or path.startswith('/'):
                 raise ValueError('invalid path %r in arg %d' % (path, i))
 
             yield File(path, view, kwargs)
