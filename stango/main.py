@@ -1,6 +1,8 @@
 import os
 import sys
-import stango.manage
+import types
+
+from stango import Manager
 
 def quickstart():
     conf_code = '''\
@@ -91,7 +93,7 @@ Available commands:
 CONFIG_DEFAULTS = {
     'autoreload': [],
     'index_file': None,
-    'post_render_hook': None,
+    'post_view_hook': None,
 }
 
 def run():
@@ -119,13 +121,16 @@ def run():
     for k, v in list(CONFIG_DEFAULTS.items()):
         config.setdefault(k, v)
 
-    if not 'files' in config:
-        print("'files.py' doesn't define the 'files' variable", file=sys.stderr)
+    if 'files' not in config:
+        print("conf.py doesn't define the 'files' variable", file=sys.stderr)
         sys.exit(1)
 
-    if config['index_file']:
-        for file in config['files']:
-            file.complete(config['index_file'])
+    manager = Manager()
+    manager.files = config['files']
+    manager.index_file = config['index_file']
+
+    if config['post_view_hook']:
+        manager.add_hook('post_view_hook', config['post_view_hook'])
 
     if sys.argv[1] == 'serve':
         host = '127.0.0.1'
@@ -142,7 +147,13 @@ def run():
         elif len(sys.argv) > 3:
             print_help()
 
-        sys.exit(stango.manage.serve(config, host, port))
+        import stango.autoreload
+
+        def do_serve():
+            print('Starting server at http://%s:%d/' % (host, port))
+            manager.serve(host, port)
+
+        stango.autoreload.main(do_serve, config['autoreload'])
 
     elif sys.argv[1] == 'render':
         if len(sys.argv) == 2:
@@ -152,7 +163,8 @@ def run():
         else:
             print_help()
 
-        sys.exit(stango.manage.render(config, outdir))
+        print('Rendering to %s...' % outdir)
+        sys.exit(manager.render(outdir) or 0)
 
     else:
         print_usage()
