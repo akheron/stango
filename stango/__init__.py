@@ -17,16 +17,15 @@ class Manager(object):
 
     def complete_files(self):
         if self.index_file:
-            for filespec in self.files:
-                filespec.complete(self.index_file)
+            self.files = [x.complete(self.index_file) for x in self.files]
         else:
             incomplete = []
             for filespec in self.files:
-                if filespec.is_incomplete():
+                if filespec.isdir():
                     incomplete.append(filespec)
             if incomplete:
                 raise ValueError('Incomplete files and no index_file: %s' %
-                                 ', '.join(incomplete))
+                                 ', '.join(repr(x.path) for x in incomplete))
 
     def get_context(self, filespec, rendering=False, serving=False):
         context = Context(self, filespec)
