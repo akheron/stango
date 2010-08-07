@@ -60,7 +60,7 @@ h1 { color: #0c0; }
         fobj.close()
         os.chmod(filename, mode)
 
-    print('Now run "stango serve" or "stango render"')
+    print('Now run "stango serve" or "stango generate"')
     return 0
 
 
@@ -70,9 +70,9 @@ usage: %s COMMAND [ARGS...]
 
 Available commands:
 
-    render [OUTDIR]
+    generate [OUTDIR]
 
-        Render the pages as flat files to directory OUTDIR
+        Generate the pages as flat files to directory OUTDIR
         (default: out). If OUTDIR doesn't exist, it is
         created, and if it already exists, it is cleared
         first.
@@ -98,7 +98,7 @@ CONFIG_DEFAULTS = {
 
 def run():
     if (len(sys.argv) < 2 or
-        sys.argv[1] not in ['serve', 'render', 'quickstart']):
+        sys.argv[1] not in ['serve', 'generate', 'quickstart']):
         print_help()
 
     if sys.argv[1] == 'quickstart':
@@ -155,7 +155,7 @@ def run():
 
         stango.autoreload.main(do_serve, config['autoreload'])
 
-    elif sys.argv[1] == 'render':
+    elif sys.argv[1] == 'generate':
         if len(sys.argv) == 2:
             outdir = 'out'
         elif len(sys.argv) == 3:
@@ -163,8 +163,8 @@ def run():
         else:
             print_help()
 
-        print('Rendering to %s...' % outdir)
-        sys.exit(manager.render(outdir) or 0)
+        print('Generating to %s...' % outdir)
+        sys.exit(manager.generate(outdir) or 0)
 
     else:
         print_usage()

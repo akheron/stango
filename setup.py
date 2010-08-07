@@ -13,7 +13,7 @@ setup(
 that feels like a web framework. User defined view functions generate
 the content to pages (e.g. using Jinja2 templates or any other means).
 During development, the pages are served locally using a built-in web
-server with all URLs working. When they site is ready, it is rendered
+server with all URLs working. When they site is ready, it is generated
 to flat files and can be pushed to a production server.''',
     license='MIT',
     packages=['stango', 'stango.manage'],

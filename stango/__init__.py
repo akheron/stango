@@ -27,14 +27,14 @@ class Manager(object):
                 raise ValueError('Incomplete files and no index_file: %s' %
                                  ', '.join(repr(x.path) for x in incomplete))
 
-    def get_context(self, filespec, rendering=False, serving=False):
+    def get_context(self, filespec, generating=False, serving=False):
         context = Context(self, filespec)
-        context.rendering = rendering
+        context.generating = generating
         context.serving = serving
         return context
 
-    def view(self, filespec, rendering=False, serving=False):
-        context = self.get_context(filespec, rendering, serving)
+    def view(self, filespec, generating=False, serving=False):
+        context = self.get_context(filespec, generating, serving)
         view_result = filespec.view(context, **filespec.kwargs)
 
         if isinstance(view_result, str):
@@ -61,7 +61,7 @@ class Manager(object):
         httpd = StangoHTTPServer((host, port), self)
         httpd.serve_forever()
 
-    def render(self, outdir):
+    def generate(self, outdir):
         self.complete_files()
 
         if os.path.exists(outdir):
@@ -83,7 +83,7 @@ class Manager(object):
                 os.makedirs(os.path.dirname(path))
 
             with open(path, 'wb') as fobj:
-                data = self.view(filespec, rendering=True)
+                data = self.view(filespec, generating=True)
                 fobj.write(data)
 
     def add_hook(self, hook_name, hook_func):

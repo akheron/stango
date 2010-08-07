@@ -15,7 +15,7 @@ class Context(object):
         self.jinja_env = None
 
         # One of these is set to True by the manager
-        self.rendering = False
+        self.generating = False
         self.serving = False
 
         self.template_dirs = [
@@ -25,7 +25,7 @@ class Context(object):
 
     def render_template(self, template_name, **kwargs):
         builtin_template_args = {
-            'rendering': self.rendering,
+            'generating': self.generating,
             'serving': self.serving,
             'path': self.filespec.path,
             'realpath': self.filespec.realpath,
