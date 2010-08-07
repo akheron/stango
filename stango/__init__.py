@@ -5,7 +5,7 @@ from stango.context import Context
 from stango.files import Files
 
 class Manager(object):
-    HOOKS = ['post_view_hook']
+    HOOK_NAMES = ['post_render_hook']
 
     def __init__(self):
         self.index_file = None
@@ -13,7 +13,7 @@ class Manager(object):
 
         # By default, all hooks return the data unmodified
         default_hook = lambda context, data: data
-        self.hooks = {hook_name: default_hook for hook_name in self.HOOKS}
+        self.hooks = {hook_name: default_hook for hook_name in self.HOOK_NAMES}
 
     def complete_files(self):
         if self.index_file:
@@ -44,7 +44,7 @@ class Manager(object):
         else:
             raise ValueError('The result of view %r for file %s is not a str, bytes or bytearray instance' % (view, filespec.realpath))
 
-        result = self.hooks['post_view_hook'](context, byte_result)
+        result = self.hooks['post_render_hook'](context, byte_result)
         if not isinstance(result, (bytes, bytearray)):
             raise ValueError('The result of %s is not a bytes or bytearray instance for %s' % (hook, filespec.realpath))
 
@@ -87,7 +87,7 @@ class Manager(object):
                 fobj.write(data)
 
     def add_hook(self, hook_name, hook_func):
-        if hook_name not in self.HOOKS:
+        if hook_name not in self.HOOK_NAMES:
             raise ValueError('%s is not a valid hook name' % hook_name)
 
         if not isinstance(hook_func, collections.Callable):
