@@ -93,7 +93,7 @@ Available commands:
 CONFIG_DEFAULTS = {
     'autoreload': [],
     'index_file': None,
-    'post_view_hook': None,
+    'post_render_hook': None,
 }
 
 def run():
@@ -129,8 +129,8 @@ def run():
     manager.files = config['files']
     manager.index_file = config['index_file']
 
-    if config['post_view_hook']:
-        manager.add_hook('post_view_hook', config['post_view_hook'])
+    if config['post_render_hook']:
+        manager.add_hook('post_render_hook', config['post_render_hook'])
 
     if sys.argv[1] == 'serve':
         host = '127.0.0.1'
