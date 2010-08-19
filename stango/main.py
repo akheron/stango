@@ -6,26 +6,24 @@ from stango import Manager
 
 def quickstart():
     conf_code = '''\
-import stango
+from stango.files import Files
 import views
 
 index_file = 'index.html'
 
-files = stango.files(
+files = Files(
     ('', views.hello, { 'message': 'Hello, World!', 'link': 'greeting.html' }),
     ('greeting.html', views.hello, { 'message': 'Greetings, World!', 'link': 'index.html' }),
 )
 '''
 
     views_code = '''\
-from stango.shortcuts import render_template
-
-def hello(message, link):
-    return render_template('hello.html', message=message, link=link)
+def hello(context, message, link):
+    return context.render_template('hello.html', message=message, link=link)
 '''
 
     hello_template = '''\
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
   <head>
     <title>{{ message }}</title>
@@ -128,6 +126,7 @@ def run():
     manager = Manager()
     manager.files = config['files']
     manager.index_file = config['index_file']
+    manager.template_dirs.insert(0, 'templates')
 
     if config['post_render_hook']:
         manager.add_hook('post_render_hook', config['post_render_hook'])

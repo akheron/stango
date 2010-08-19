@@ -26,7 +26,7 @@ class Filespec(FilespecBase):
         return super(Filespec, cls).__new__(cls, path, view, kwargs, realpath)
 
     def isdir(self):
-        return not self.realpath or self.realpath.endswith('/')
+        return not self.path or self.path.endswith('/')
 
     def complete(self, index_file):
         assert index_file is not None

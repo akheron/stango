@@ -1,7 +1,3 @@
-import os
-
-STANGO_TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
-
 def dict_merge(*args):
     result = {}
     for d in args:
@@ -18,11 +14,6 @@ class Context(object):
         self.generating = False
         self.serving = False
 
-        self.template_dirs = [
-            'templates',
-            STANGO_TEMPLATE_DIR,
-        ]
-
     def render_template(self, template_name, **kwargs):
         builtin_template_args = {
             'generating': self.generating,
@@ -38,7 +29,7 @@ class Context(object):
                 # Create the Jinja environment once and save it to the
                 # manager instance
                 from jinja2 import Environment, FileSystemLoader
-                loader = FileSystemLoader(self.template_dirs)
+                loader = FileSystemLoader(self.manager.template_dirs)
                 env = Environment(loader=loader)
                 self.jinja_env = self.manager._jinja_env = env
 

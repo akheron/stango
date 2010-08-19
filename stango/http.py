@@ -29,6 +29,10 @@ class StangoRequestHandler(BaseHTTPRequestHandler):
         else:
             self.start_response(404)
 
+    def log_message(self, *args, **kwargs):
+        if self.server.verbose:
+            super(StangoRequestHandler, self).log_message(*args, **kwargs)
+
 
 class StangoHTTPServer(HTTPServer):
     def __init__(self, server_address, manager):

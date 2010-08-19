@@ -4,12 +4,15 @@ import shutil
 from stango.context import Context
 from stango.files import Files
 
+STANGO_TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
+
 class Manager(object):
     HOOK_NAMES = ['post_render_hook']
 
     def __init__(self):
         self.index_file = None
         self.files = Files()
+        self.template_dirs = [STANGO_TEMPLATE_DIR]
 
         # By default, all hooks return the data unmodified
         default_hook = lambda context, data: data
@@ -42,15 +45,15 @@ class Manager(object):
         elif isinstance(view_result, (bytes, bytearray)):
             byte_result = view_result
         else:
-            raise ValueError('The result of view %r for file %s is not a str, bytes or bytearray instance' % (view, filespec.realpath))
+            raise ValueError('The result of view %r for path %r is not a str, bytes or bytearray instance' % (filespec.view.__name__, filespec.path))
 
         result = self.hooks['post_render_hook'](context, byte_result)
         if not isinstance(result, (bytes, bytearray)):
-            raise ValueError('The result of %s is not a bytes or bytearray instance for %s' % (hook, filespec.realpath))
+            raise ValueError('The result of post_render_hook is not a bytes or bytearray instance for %s' % filespec.realpath)
 
         return result
 
-    def serve(self, host, port):
+    def serve(self, host, port, run_server=True, verbose=False):
         from stango.http import StangoHTTPServer
 
         if port < 0 or port > 65535:
@@ -59,7 +62,12 @@ class Manager(object):
         self.complete_files()
 
         httpd = StangoHTTPServer((host, port), self)
-        httpd.serve_forever()
+        httpd.verbose = verbose
+
+        if run_server:
+            httpd.serve_forever()
+        else:
+            return httpd
 
     def generate(self, outdir):
         self.complete_files()
