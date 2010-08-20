@@ -44,8 +44,17 @@ class Manager(object):
             byte_result = view_result.encode('utf-8')
         elif isinstance(view_result, (bytes, bytearray)):
             byte_result = view_result
+        elif (hasattr(view_result, 'read') and
+              isinstance(view_result.read, collections.Callable)):
+            file_contents = view_result.read()
+            if isinstance(file_contents, str):
+                 byte_result = file_contents.encode('utf-8')
+            elif isinstance(file_contents, (bytes, bytearray)):
+                byte_result = file_contents
+            else:
+                raise ValueError('Contents of the file-like object, returned by view %r for path %r, is not a str, bytes or bytearray instance' % (filespec.view.__name__, filespec.path))
         else:
-            raise ValueError('The result of view %r for path %r is not a str, bytes or bytearray instance' % (filespec.view.__name__, filespec.path))
+            raise ValueError('The result of view %r for path %r is not a str, bytes or bytearray instance or a file-like object' % (filespec.view.__name__, filespec.path))
 
         result = self.hooks['post_render_hook'](context, byte_result)
         if not isinstance(result, (bytes, bytearray)):

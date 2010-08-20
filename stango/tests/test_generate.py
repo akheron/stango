@@ -1,3 +1,4 @@
+import io
 import os
 import unittest
 
@@ -78,6 +79,26 @@ class GenerateTestCase(StangoTestCase):
         with open(os.path.join(self.tmp, 'index.html'), 'rb') as fobj:
             self.eq(fobj.read(), b'\xba\xdc\x0f\xfe')
 
+    def test_view_returns_a_filelike_object_with_str_contents(self):
+        self.manager.files = Files(
+            ('', view_value(io.StringIO('foobar'))),
+        )
+        self.manager.generate(self.tmp)
+
+        self.eq(os.listdir(self.tmp), ['index.html'])
+        with open(os.path.join(self.tmp, 'index.html'), 'r') as fobj:
+            self.eq(fobj.read(), 'foobar')
+
+    def test_view_returns_a_filelike_object_with_bytes_contents(self):
+        self.manager.files = Files(
+            ('', view_value(io.BytesIO(b'barfoo'))),
+        )
+        self.manager.generate(self.tmp)
+
+        self.eq(os.listdir(self.tmp), ['index.html'])
+        with open(os.path.join(self.tmp, 'index.html'), 'r') as fobj:
+            self.eq(fobj.read(), 'barfoo')
+
     def test_view_renders_a_template(self):
         self.manager.template_dirs.insert(0, self.template_path)
         self.manager.files = Files(
@@ -103,14 +124,26 @@ class GenerateTestCase(StangoTestCase):
             ('', view_value(None)),
         )
         exc = self.assert_raises(ValueError, self.manager.generate, self.tmp)
-        self.eq(str(exc), "The result of view 'value_returner' for path '' is not a str, bytes or bytearray instance")
+        self.eq(str(exc), "The result of view 'value_returner' for path '' is not a str, bytes or bytearray instance or a file-like object")
 
     def test_view_returns_an_integer(self):
         self.manager.files = Files(
             ('foo.txt', view_value(1)),
         )
         exc = self.assert_raises(ValueError, self.manager.generate, self.tmp)
-        self.eq(str(exc), "The result of view 'value_returner' for path 'foo.txt' is not a str, bytes or bytearray instance")
+        self.eq(str(exc), "The result of view 'value_returner' for path 'foo.txt' is not a str, bytes or bytearray instance or a file-like object")
+
+    def test_view_returns_a_filelike_object_with_invalid_contents(self):
+        class InvalidFile(object):
+            def read(self):
+                return 42
+
+        self.manager.files = Files(
+            ('', view_value(InvalidFile())),
+        )
+        exc = self.assert_raises(ValueError, self.manager.generate, self.tmp)
+        self.eq(str(exc), "Contents of the file-like object, returned by view 'value_returner' for path '', is not a str, bytes or bytearray instance")
+
 
     def test_post_render_hook(self):
         def post_render_hook(context, data):
