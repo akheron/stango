@@ -40,7 +40,7 @@ class ServeTestCase(StangoTestCase):
         self.manager.files = Files(
             ('', view_value('foobar')),
         )
-        yield self.manager.serve('127.0.0.1', 8080, run_server=False)
+        yield self.manager.make_server('127.0.0.1', 8080)
 
         data = urlopen('http://127.0.0.1:8080/')
         self.eq(data.read(), b'foobar')
@@ -50,7 +50,7 @@ class ServeTestCase(StangoTestCase):
         self.manager.files = Files(
             ('', view_value('bazbuzz')),
         )
-        yield self.manager.serve('127.0.0.1', 8080, run_server=False)
+        yield self.manager.make_server('127.0.0.1', 8080)
 
         data = urlopen('http://127.0.0.1:8080/index.html')
         self.eq(data.read(), b'bazbuzz')
@@ -60,7 +60,7 @@ class ServeTestCase(StangoTestCase):
         self.manager.files = Files(
             ('', view_value('foobar')),
         )
-        yield self.manager.serve('127.0.0.1', 8080, run_server=False)
+        yield self.manager.make_server('127.0.0.1', 8080)
 
         url = 'http://127.0.0.1:8080/nonexistent'
         exc = self.assert_raises(HTTPError, urlopen, url)

@@ -7,6 +7,11 @@ import stango.main
 from stango import Manager
 from stango.tests import StangoTestCase, make_suite
 
+# A fake HTTP server class whose serve_forever returns right away
+class FakeHTTPServer(object):
+    def serve_forever(self):
+        return
+
 class MainTestCase(StangoTestCase):
     def setup(self):
         self.monkey_patches = []
@@ -43,7 +48,6 @@ class MainTestCase(StangoTestCase):
     def monkey_patch(self, cls, attr, value):
         self.monkey_patches.append((cls, attr, getattr(cls, attr)))
         setattr(cls, attr, value)
-
 
     # Tests start from here
 
@@ -131,11 +135,11 @@ files = Files(('', lambda x: 'foo'))
             func()
         self.monkey_patch(stango.autoreload, 'main', fake_autoreload)
 
-        def fake_serve(mgr, host, port):
+        def fake_make_server(mgr, host, port):
             self.eq(host, '127.0.0.1')
             self.eq(port, 8000)
-            return mgr
-        self.monkey_patch(Manager, 'serve', fake_serve)
+            return FakeHTTPServer()
+        self.monkey_patch(Manager, 'make_server', fake_make_server)
 
         stango.main.run()
 
@@ -151,11 +155,11 @@ files = Files(('', lambda x: 'foo'))
             func()
         self.monkey_patch(stango.autoreload, 'main', fake_autoreload)
 
-        def fake_serve(mgr, host, port):
+        def fake_make_server(mgr, host, port):
             self.eq(host, '127.0.0.1')
             self.eq(port, 9876)
-            return mgr
-        self.monkey_patch(Manager, 'serve', fake_serve)
+            return FakeHTTPServer()
+        self.monkey_patch(Manager, 'make_server', fake_make_server)
 
         stango.main.run()
 
@@ -171,11 +175,11 @@ files = Files(('', lambda x: 'foo'))
             func()
         self.monkey_patch(stango.autoreload, 'main', fake_autoreload)
 
-        def fake_serve(mgr, host, port):
+        def fake_make_server(mgr, host, port):
             self.eq(host, '4.3.2.1')
             self.eq(port, 9876)
-            return mgr
-        self.monkey_patch(Manager, 'serve', fake_serve)
+            return FakeHTTPServer()
+        self.monkey_patch(Manager, 'make_server', fake_make_server)
 
         stango.main.run()
 

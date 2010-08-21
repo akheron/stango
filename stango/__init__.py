@@ -62,7 +62,7 @@ class Manager(object):
 
         return result
 
-    def serve(self, host, port, run_server=True, verbose=False):
+    def make_server(self, host, port, verbose=False):
         from stango.http import StangoHTTPServer
 
         if port < 0 or port > 65535:
@@ -73,10 +73,7 @@ class Manager(object):
         httpd = StangoHTTPServer((host, port), self)
         httpd.verbose = verbose
 
-        if run_server:
-            httpd.serve_forever()
-        else:
-            return httpd
+        return httpd
 
     def generate(self, outdir):
         self.complete_files()

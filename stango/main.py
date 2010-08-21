@@ -146,12 +146,13 @@ def run():
         elif len(sys.argv) > 3:
             print_help()
 
-        import stango.autoreload
+        httpd = manager.make_server(host, port)
 
         def do_serve():
             print('Starting server at http://%s:%d/' % (host, port))
-            manager.serve(host, port)
+            httpd.serve_forever()
 
+        import stango.autoreload
         stango.autoreload.main(do_serve, config['autoreload'])
 
     elif sys.argv[1] == 'generate':
