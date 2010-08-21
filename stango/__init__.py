@@ -1,4 +1,5 @@
 import collections
+import errno
 import os
 import shutil
 from stango.context import Context
@@ -80,7 +81,13 @@ class Manager(object):
 
         if os.path.exists(outdir):
             if os.path.isdir(outdir):
-                shutil.rmtree(outdir)
+                # Delete the contents outdir, not outdir itself
+                for entry in os.listdir(outdir):
+                    path = os.path.join(outdir, entry)
+                    if os.path.isdir(path):
+                        shutil.rmtree(path)
+                    else:
+                        os.remove(path)
             else:
                 raise ValueError('%r is not a directory' % outdir)
 

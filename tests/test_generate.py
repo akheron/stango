@@ -45,6 +45,21 @@ class GenerateTestCase(StangoTestCase):
         with open(os.path.join(self.tmp, 'dest.txt'), 'r') as fobj:
             self.eq(fobj.read(), 'foo')
 
+    def test_generate_outdir_exists(self):
+        # Create a file and a directory to outdir
+        with open(os.path.join(self.tmp, 'foo'), 'w') as fobj:
+            fobj.write('bar')
+        os.mkdir(os.path.join(self.tmp, 'dummydir'))
+        self.eq(sorted(os.listdir(self.tmp)), ['dummydir', 'foo'])
+
+        self.manager.files = Files(
+            ('', view_value('baz')),
+        )
+        self.manager.generate(self.tmp)
+
+        # Check that the old destdir contents were removed
+        self.eq(os.listdir(self.tmp), ['index.html'])
+
     def test_generate_different_index_file(self):
         self.manager.index_file = 'foofile.txt'
         self.manager.files += [
