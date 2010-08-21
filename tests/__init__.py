@@ -43,12 +43,27 @@ class StangoTestCase(unittest.TestCase):
         self.teardown()
 
 
+def view_value(value):
+    '''Construct a view that returns the given value when called'''
+    def value_returner(context):
+        return value
+    return value_returner
+
+
+def view_template(template_name):
+    '''Construct a view that renders the given template when called'''
+    def template_renderer(context, **kwargs):
+        return context.render_template(template_name, **kwargs)
+    return template_renderer
+
+
 def make_suite(cls):
+    '''Makes a suite from all test functions in a TestCase class'''
     return unittest.TestLoader().loadTestsFromTestCase(cls)
 
 
 def suite():
-    from stango.tests import \
+    from . import \
         test_files, test_generate, test_main, test_manager, test_serve, \
         test_views
     suite = unittest.TestSuite()

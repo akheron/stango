@@ -1,12 +1,12 @@
 from stango import Manager
 from stango.files import Files
-from stango.tests import StangoTestCase, make_suite
-from stango.tests.util import view_value, view_template
 
 import functools
 from threading import Thread
 from urllib.request import urlopen
 from urllib.error import HTTPError
+
+from . import StangoTestCase, make_suite, view_value, view_template
 
 class ServeTestCase(StangoTestCase):
     def setup(self):

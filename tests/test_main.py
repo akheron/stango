@@ -5,7 +5,8 @@ import sys
 import stango.autoreload
 import stango.main
 from stango import Manager
-from stango.tests import StangoTestCase, make_suite
+
+from . import StangoTestCase, make_suite
 
 # A fake HTTP server class whose serve_forever returns right away
 class FakeHTTPServer(object):

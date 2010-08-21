@@ -1,12 +1,12 @@
 from stango.files import Filespec, Files, files_from_dir, files_from_tar
 from stango.views import file_from_tar, static_file
-from stango.tests import StangoTestCase, make_suite
 
 import operator
 import os
 
-def dummy_view(context):
-    return ''
+from . import StangoTestCase, make_suite, view_value
+
+dummy_view = view_value('')
 
 class FilesTestCase(StangoTestCase):
     def test_Files_init(self):

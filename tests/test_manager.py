@@ -3,7 +3,8 @@ import unittest
 
 from stango import Manager
 from stango.files import Files
-from stango.tests import StangoTestCase, make_suite
+
+from . import StangoTestCase, make_suite
 
 class ManagerTestCase(StangoTestCase):
     def setup(self):

@@ -4,8 +4,8 @@ import unittest
 
 from stango import Manager
 from stango.files import Files
-from stango.tests import StangoTestCase, make_suite
-from stango.tests.util import view_value, view_template
+
+from . import StangoTestCase, make_suite, view_value, view_template
 
 dummy_view = view_value('')
 

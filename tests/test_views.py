@@ -1,8 +1,9 @@
 from stango import Manager
 from stango.files import files_from_dir, files_from_tar
-from stango.tests import StangoTestCase, make_suite
 
 import os
+
+from . import StangoTestCase, make_suite
 
 def filelist(path):
     result = []

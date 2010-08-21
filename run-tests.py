@@ -23,8 +23,8 @@ if coverage and options.coverage:
     cov.start()
 
 # Import the Stango code down here to make coverage count the importing, too
-import stango.tests
-result = stango.tests.run(options.verbose)
+import tests
+result = tests.run(options.verbose)
 
 if result.wasSuccessful() and options.coverage:
     exclude = [
