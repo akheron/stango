@@ -146,10 +146,9 @@ def run():
         elif len(sys.argv) > 3:
             print_help()
 
-        httpd = manager.make_server(host, port)
-
         def do_serve():
             print('Starting server at http://%s:%d/' % (host, port))
+            httpd = manager.make_server(host, port)
             httpd.serve_forever()
 
         import stango.autoreload
