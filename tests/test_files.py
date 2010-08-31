@@ -114,6 +114,18 @@ class FilesTestCase(StangoTestCase):
             ]
         )
 
+        self.eq(
+            list(files.add_prefix('quux/')),
+            [
+                Filespec('quux/0', dummy_view),
+                Filespec('quux/b', dummy_view, {'foo': 'bar'}),
+                Filespec('quux/c', dummy_view),
+                Filespec('quux/d', dummy_view),
+                Filespec('quux/e', dummy_view),
+                Filespec('quux/999', dummy_view),
+            ]
+        )
+
         assert [] == Files()
         assert [None] != Files()
         assert Files(('a', dummy_view)) != [None]

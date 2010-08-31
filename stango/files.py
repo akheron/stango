@@ -98,6 +98,9 @@ class Files(collections.MutableSequence):
 
         return True
 
+    def add_prefix(self, prefix):
+        return Files((prefix + f.path, f.view, f.kwargs) for f in self)
+
 
 def _served_path(basepath, filename, strip):
     if strip > 0:
