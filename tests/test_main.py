@@ -124,8 +124,8 @@ files = Files(('', lambda x: 'foo'))
 
         self.eq(sorted(os.listdir('out')), ['greeting.html', 'index.html'])
 
-    def test_serve(self):
-        self.set_argv('stango', 'serve')
+    def test_runserver(self):
+        self.set_argv('stango', 'runserver')
         self.write_config('''\
 from stango import Files
 index_file = 'index.html'
@@ -144,8 +144,8 @@ files = Files(('', lambda x: 'foo'))
 
         stango.main.run()
 
-    def test_serve_explicit_port(self):
-        self.set_argv('stango', 'serve', '9876')
+    def test_runserver_explicit_port(self):
+        self.set_argv('stango', 'runserver', '9876')
         self.write_config('''\
 from stango import Files
 index_file = 'index.html'
@@ -164,8 +164,8 @@ files = Files(('', lambda x: 'foo'))
 
         stango.main.run()
 
-    def test_serve_explicit_host_and_port(self):
-        self.set_argv('stango', 'serve', '4.3.2.1:9876')
+    def test_runserver_explicit_host_and_port(self):
+        self.set_argv('stango', 'runserver', '4.3.2.1:9876')
         self.write_config('''\
 from stango import Files
 index_file = 'index.html'

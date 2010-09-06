@@ -96,7 +96,7 @@ CONFIG_DEFAULTS = {
 
 def run():
     if (len(sys.argv) < 2 or
-        sys.argv[1] not in ['serve', 'generate', 'quickstart']):
+        sys.argv[1] not in ['runserver', 'generate', 'quickstart']):
         print_help()
 
     if sys.argv[1] == 'quickstart':
@@ -131,7 +131,7 @@ def run():
     if config['post_render_hook']:
         manager.add_hook('post_render_hook', config['post_render_hook'])
 
-    if sys.argv[1] == 'serve':
+    if sys.argv[1] == 'runserver':
         host = '127.0.0.1'
         port = 8000
         if len(sys.argv) == 3:
