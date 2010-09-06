@@ -19,18 +19,6 @@ class Manager(object):
         default_hook = lambda context, data: data
         self.hooks = {hook_name: default_hook for hook_name in self.HOOK_NAMES}
 
-    def complete_files(self):
-        if self.index_file:
-            self.files = [x.complete(self.index_file) for x in self.files]
-        else:
-            incomplete = []
-            for filespec in self.files:
-                if filespec.isdir():
-                    incomplete.append(filespec)
-            if incomplete:
-                raise ValueError('Incomplete files and no index_file: %s' %
-                                 ', '.join(repr(x.path) for x in incomplete))
-
     def get_context(self, filespec, generating=False, serving=False):
         context = Context(self, filespec)
         context.generating = generating
@@ -59,7 +47,7 @@ class Manager(object):
 
         result = self.hooks['post_render_hook'](context, byte_result)
         if not isinstance(result, (bytes, bytearray)):
-            raise ValueError('The result of post_render_hook is not a bytes or bytearray instance for %s' % filespec.realpath)
+            raise ValueError('The result of post_render_hook is not a bytes or bytearray instance for %s' % context.realpath)
 
         return result
 
@@ -69,16 +57,12 @@ class Manager(object):
         if port < 0 or port > 65535:
             raise ValueError('Invalid port %r' % port)
 
-        self.complete_files()
-
         httpd = StangoHTTPServer((host, port), self)
         httpd.verbose = verbose
 
         return httpd
 
     def generate(self, outdir):
-        self.complete_files()
-
         if os.path.exists(outdir):
             if os.path.isdir(outdir):
                 # Delete the contents outdir, not outdir itself
@@ -98,7 +82,7 @@ class Manager(object):
                 raise
 
         for filespec in self.files:
-            path = os.path.join(outdir, filespec.realpath)
+            path = os.path.join(outdir, filespec.realpath(self.index_file))
 
             if not os.path.exists(os.path.dirname(path)):
                 os.makedirs(os.path.dirname(path))

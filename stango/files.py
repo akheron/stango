@@ -4,13 +4,10 @@ import collections
 import os
 import tarfile
 
-FilespecBase = collections.namedtuple('Filespec', 'path view kwargs realpath')
+FilespecBase = collections.namedtuple('Filespec', 'path view kwargs')
 
 class Filespec(FilespecBase):
-    def __new__(cls, path, view, kwargs={}, realpath=None):
-        if realpath is None:
-            realpath = path
-
+    def __new__(cls, path, view, kwargs={}):
         if not isinstance(path, str):
             raise TypeError('path must be a str, not %r' % path)
 
@@ -23,23 +20,21 @@ class Filespec(FilespecBase):
         if not isinstance(kwargs, dict):
             raise TypeError('%r: kwargs must be a dict' % path)
 
-        return super(Filespec, cls).__new__(cls, path, view, kwargs, realpath)
+        return super(Filespec, cls).__new__(cls, path, view, kwargs)
 
     def isdir(self):
         return not self.path or self.path.endswith('/')
 
-    def complete(self, index_file):
-        assert index_file is not None
-
+    def realpath(self, index_file):
         if not self.isdir():
-            return self
-        else:
-            return Filespec(
-                self.path,
-                self.view,
-                self.kwargs,
-                os.path.join(self.path, index_file),
-            )
+            return self.path
+
+        elif not index_file:
+            raise ValueError('Directory path and no index_file: %r' %
+                             self.path)
+
+        return os.path.join(self.path, index_file)
+
 
 class Files(collections.MutableSequence):
     def __init__(self, *args):

@@ -128,11 +128,10 @@ class GenerateTestCase(StangoTestCase):
     def test_no_index_file(self):
         self.manager.index_file = None
         self.manager.files = Files(
-            ('', dummy_view),
-            ('jee/', dummy_view),
+            ('quux/', dummy_view),
         )
         exc = self.assert_raises(ValueError, self.manager.generate, self.tmp)
-        self.eq(str(exc), "Incomplete files and no index_file: '', 'jee/'")
+        self.eq(str(exc), "Directory path and no index_file: 'quux/'")
 
     def test_view_returns_None(self):
         self.manager.files = Files(

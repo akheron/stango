@@ -7,7 +7,8 @@ def dict_merge(*args):
 class Context(object):
     def __init__(self, manager, filespec):
         self.manager = manager
-        self.filespec = filespec
+        self.path = filespec.path
+        self.realpath = filespec.realpath(manager.index_file)
         self.jinja_env = None
 
         # One of these is set to True by the manager
@@ -18,8 +19,8 @@ class Context(object):
         builtin_template_args = {
             'generating': self.generating,
             'serving': self.serving,
-            'path': self.filespec.path,
-            'realpath': self.filespec.realpath,
+            'path': self.path,
+            'realpath': self.realpath,
         }
 
         if not self.jinja_env:
