@@ -44,6 +44,7 @@ class ServeTestCase(StangoTestCase):
 
         data = urlopen('http://127.0.0.1:8080/')
         self.eq(data.read(), b'foobar')
+        self.eq(data.info()['Content-Type'], 'text/html')
 
     @serve
     def test_real_path(self):
@@ -54,6 +55,7 @@ class ServeTestCase(StangoTestCase):
 
         data = urlopen('http://127.0.0.1:8080/index.html')
         self.eq(data.read(), b'bazbuzz')
+        self.eq(data.info()['Content-Type'], 'text/html')
 
     @serve
     def test_404(self):
