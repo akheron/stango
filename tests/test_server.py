@@ -8,7 +8,7 @@ from urllib.error import HTTPError
 
 from . import StangoTestCase, make_suite, view_value, view_template
 
-class ServeTestCase(StangoTestCase):
+class ServerTestCase(StangoTestCase):
     def setup(self):
         self.manager = Manager()
         self.manager.index_file = 'index.html'
@@ -70,4 +70,4 @@ class ServeTestCase(StangoTestCase):
 
 
 def suite():
-    return make_suite(ServeTestCase)
+    return make_suite(ServerTestCase)
