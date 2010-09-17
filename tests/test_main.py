@@ -136,9 +136,10 @@ files = Files(('', lambda x: 'foo'))
             func()
         self.monkey_patch(stango.autoreload, 'main', fake_autoreload)
 
-        def fake_make_server(mgr, host, port):
+        def fake_make_server(mgr, host, port, verbose):
             self.eq(host, '127.0.0.1')
             self.eq(port, 8000)
+            self.eq(verbose, True)
             return FakeHTTPServer()
         self.monkey_patch(Manager, 'make_server', fake_make_server)
 
@@ -156,9 +157,10 @@ files = Files(('', lambda x: 'foo'))
             func()
         self.monkey_patch(stango.autoreload, 'main', fake_autoreload)
 
-        def fake_make_server(mgr, host, port):
+        def fake_make_server(mgr, host, port, verbose):
             self.eq(host, '127.0.0.1')
             self.eq(port, 9876)
+            self.eq(verbose, True)
             return FakeHTTPServer()
         self.monkey_patch(Manager, 'make_server', fake_make_server)
 
@@ -176,9 +178,10 @@ files = Files(('', lambda x: 'foo'))
             func()
         self.monkey_patch(stango.autoreload, 'main', fake_autoreload)
 
-        def fake_make_server(mgr, host, port):
+        def fake_make_server(mgr, host, port, verbose):
             self.eq(host, '4.3.2.1')
             self.eq(port, 9876)
+            self.eq(verbose, True)
             return FakeHTTPServer()
         self.monkey_patch(Manager, 'make_server', fake_make_server)
 

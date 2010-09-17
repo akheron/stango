@@ -148,7 +148,7 @@ def run():
 
         def do_serve():
             print('Starting server at http://%s:%d/' % (host, port))
-            httpd = manager.make_server(host, port)
+            httpd = manager.make_server(host, port, verbose=True)
             httpd.serve_forever()
 
         import stango.autoreload
