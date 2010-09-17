@@ -19,14 +19,10 @@ class Manager(object):
         default_hook = lambda context, data: data
         self.hooks = {hook_name: default_hook for hook_name in self.HOOK_NAMES}
 
-    def get_context(self, filespec, generating=False, serving=False):
-        context = Context(self, filespec)
-        context.generating = generating
-        context.serving = serving
-        return context
+    def view(self, filespec, mode):
+        assert mode in ('generating', 'serving')
 
-    def view(self, filespec, generating=False, serving=False):
-        context = self.get_context(filespec, generating, serving)
+        context = Context(self, mode, filespec)
         view_result = filespec.view(context, **filespec.kwargs)
 
         if isinstance(view_result, str):
@@ -88,7 +84,7 @@ class Manager(object):
                 os.makedirs(os.path.dirname(path))
 
             with open(path, 'wb') as fobj:
-                data = self.view(filespec, generating=True)
+                data = self.view(filespec, mode='generating')
                 fobj.write(data)
 
     def add_hook(self, hook_name, hook_func):

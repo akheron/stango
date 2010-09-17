@@ -5,20 +5,17 @@ def dict_merge(*args):
     return result
 
 class Context(object):
-    def __init__(self, manager, filespec):
+    def __init__(self, manager, mode, filespec):
         self.manager = manager
+        self.mode = mode
         self.path = filespec.path
         self.realpath = filespec.realpath(manager.index_file)
         self.jinja_env = None
 
-        # One of these is set to True by the manager
-        self.generating = False
-        self.serving = False
-
     def render_template(self, template_name, **kwargs):
         builtin_template_args = {
-            'generating': self.generating,
-            'serving': self.serving,
+            'generating': self.mode == 'generating',
+            'serving': self.mode == 'serving',
             'path': self.path,
             'realpath': self.realpath,
         }

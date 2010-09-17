@@ -24,7 +24,7 @@ class StangoRequestHandler(BaseHTTPRequestHandler):
         for filespec in manager.files:
             if filespec.realpath(manager.index_file) == realpath:
                 self.start_response(200)
-                self.wfile.write(manager.view(filespec, serving=True))
+                self.wfile.write(manager.view(filespec, mode='serving'))
                 break
         else:
             self.start_response(404)
