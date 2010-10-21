@@ -1,14 +1,14 @@
 import os
 import unittest
 
-from stango import Manager
+from stango import Stango
 from stango.files import Files
 
 from . import StangoTestCase, make_suite
 
-class ManagerTestCase(StangoTestCase):
+class StangoTestCase(StangoTestCase):
     def setup(self):
-        self.manager = Manager()
+        self.manager = Stango()
 
     def test_manager_defaults(self):
         self.eq(self.manager.files, Files())
@@ -36,4 +36,4 @@ class ManagerTestCase(StangoTestCase):
 
 
 def suite():
-    return make_suite(ManagerTestCase)
+    return make_suite(StangoTestCase)

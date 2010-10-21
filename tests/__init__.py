@@ -64,14 +64,14 @@ def make_suite(cls):
 
 def suite():
     from . import \
-        test_files, test_generate, test_main, test_manager, test_serve, \
+        test_files, test_generate, test_main, test_manager, test_server, \
         test_views
     suite = unittest.TestSuite()
     suite.addTest(test_files.suite())
     suite.addTest(test_generate.suite())
     suite.addTest(test_main.suite())
     suite.addTest(test_manager.suite())
-    suite.addTest(test_serve.suite())
+    suite.addTest(test_server.suite())
     suite.addTest(test_views.suite())
     return suite
 

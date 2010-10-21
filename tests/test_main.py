@@ -4,7 +4,7 @@ import sys
 
 import stango.autoreload
 import stango.main
-from stango import Manager
+from stango import Stango
 
 from . import StangoTestCase, make_suite
 
@@ -81,7 +81,7 @@ files = Files()
         def fake_generate(mgr, outdir):
             self.eq(outdir, 'out')
             return mgr
-        self.monkey_patch(Manager, 'generate', fake_generate)
+        self.monkey_patch(Stango, 'generate', fake_generate)
 
         exc = self.assert_raises(SystemExit, stango.main.run)
         manager = exc.args[0]
@@ -102,7 +102,7 @@ files = Files(('', lambda x: 'foo'))
         def fake_generate(mgr, outdir):
             self.eq(outdir, 'quux')
             return mgr
-        self.monkey_patch(Manager, 'generate', fake_generate)
+        self.monkey_patch(Stango, 'generate', fake_generate)
 
         exc = self.assert_raises(SystemExit, stango.main.run)
         manager = exc.args[0]
@@ -141,7 +141,7 @@ files = Files(('', lambda x: 'foo'))
             self.eq(port, 8000)
             self.eq(verbose, True)
             return FakeHTTPServer()
-        self.monkey_patch(Manager, 'make_server', fake_make_server)
+        self.monkey_patch(Stango, 'make_server', fake_make_server)
 
         stango.main.run()
 
@@ -162,7 +162,7 @@ files = Files(('', lambda x: 'foo'))
             self.eq(port, 9876)
             self.eq(verbose, True)
             return FakeHTTPServer()
-        self.monkey_patch(Manager, 'make_server', fake_make_server)
+        self.monkey_patch(Stango, 'make_server', fake_make_server)
 
         stango.main.run()
 
@@ -183,7 +183,7 @@ files = Files(('', lambda x: 'foo'))
             self.eq(port, 9876)
             self.eq(verbose, True)
             return FakeHTTPServer()
-        self.monkey_patch(Manager, 'make_server', fake_make_server)
+        self.monkey_patch(Stango, 'make_server', fake_make_server)
 
         stango.main.run()
 

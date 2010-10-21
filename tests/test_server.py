@@ -1,4 +1,4 @@
-from stango import Manager
+from stango import Stango
 from stango.files import Files
 
 import functools
@@ -10,7 +10,7 @@ from . import StangoTestCase, make_suite, view_value, view_template
 
 class ServerTestCase(StangoTestCase):
     def setup(self):
-        self.manager = Manager()
+        self.manager = Stango()
         self.manager.index_file = 'index.html'
 
     def serve(func):

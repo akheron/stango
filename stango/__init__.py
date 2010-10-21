@@ -7,7 +7,7 @@ from stango.files import Files
 
 STANGO_TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 
-class Manager(object):
+class Stango(object):
     HOOK_NAMES = ['post_render_hook']
 
     def __init__(self):

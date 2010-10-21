@@ -2,7 +2,7 @@ import os
 import sys
 import types
 
-from stango import Manager
+from stango import Stango
 
 def quickstart():
     conf_code = '''\
@@ -123,7 +123,7 @@ def run():
         print("conf.py doesn't define the 'files' variable", file=sys.stderr)
         sys.exit(1)
 
-    manager = Manager()
+    manager = Stango()
     manager.files = config['files']
     manager.index_file = config['index_file']
     manager.template_dirs.insert(0, 'templates')

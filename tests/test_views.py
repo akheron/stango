@@ -1,4 +1,4 @@
-from stango import Manager
+from stango import Stango
 from stango.files import files_from_dir, files_from_tar
 
 import os
@@ -16,7 +16,7 @@ def filelist(path):
 class ViewsTestCase(StangoTestCase):
     def setup(self):
         self.tmp = self.tempdir()
-        self.manager = Manager()
+        self.manager = Stango()
 
     def test_static_file(self):
         # stango.files.files_from_dir uses the stango.views.static_file view

@@ -2,7 +2,7 @@ import io
 import os
 import unittest
 
-from stango import Manager
+from stango import Stango
 from stango.files import Files
 
 from . import StangoTestCase, make_suite, view_value, view_template
@@ -12,7 +12,7 @@ dummy_view = view_value('')
 class GenerateTestCase(StangoTestCase):
     def setup(self):
         self.tmp = self.tempdir()
-        self.manager = Manager()
+        self.manager = Stango()
         self.manager.index_file = 'index.html'
 
     def test_generate_simple(self):
