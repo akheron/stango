@@ -58,7 +58,7 @@ h1 { color: #0c0; }
         fobj.close()
         os.chmod(filename, mode)
 
-    print('Now run "stango serve" or "stango generate"')
+    print('Now run "stango runserver" or "stango generate"')
     return 0
 
 
@@ -75,10 +75,10 @@ Available commands:
         created, and if it already exists, it is cleared
         first.
 
-    serve [[HOST:]PORT]
+    runserver [[HOST:]PORT]
 
-        Serve the pages on http://HOST:PORT/ (default:
-        127.0.0.1:8000).
+        Start the development server on http://HOST:PORT/
+        (default: http://127.0.0.1:8000/).
 
     quickstart
 
