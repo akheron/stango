@@ -11,16 +11,7 @@ class Context(object):
         self.mode = mode
         self.path = filespec.path
         self.realpath = filespec.realpath(manager.index_file)
-
-        try:
-            self.jinja_env = self.manager._jinja_env
-        except AttributeError:
-            # Create the Jinja environment once and save it to the
-            # manager instance
-            from jinja2 import Environment, FileSystemLoader
-            loader = FileSystemLoader(self.manager.template_dirs)
-            env = Environment(loader=loader)
-            self.jinja_env = self.manager._jinja_env = env
+        self.jinja_env = manager.jinja_env
 
     def render_template(self, template_name, **kwargs):
         builtin_template_args = {

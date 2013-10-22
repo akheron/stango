@@ -3,6 +3,7 @@ import errno
 import os
 import shutil
 from stango.context import Context
+from stango.decorators import cached_property
 from stango.files import Files
 
 STANGO_TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
@@ -19,6 +20,12 @@ class Stango(object):
         # By default, all hooks return the data unmodified
         default_hook = lambda context, data: data
         self.hooks = {hook_name: default_hook for hook_name in self.HOOK_NAMES}
+
+    @cached_property
+    def jinja_env(self):
+        from jinja2 import Environment, FileSystemLoader
+        loader = FileSystemLoader(self.template_dirs)
+        return Environment(loader=loader)
 
     def view(self, filespec, mode):
         assert mode in ('generating', 'serving')
