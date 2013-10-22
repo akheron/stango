@@ -1,8 +1,8 @@
 import os
 import sys
-import types
 
 from stango import Stango
+
 
 def quickstart():
     conf_code = '''\
@@ -94,9 +94,11 @@ CONFIG_DEFAULTS = {
     'post_render_hook': None,
 }
 
+
 def run():
-    if (len(sys.argv) < 2 or
-        sys.argv[1] not in ['runserver', 'generate', 'quickstart']):
+    if len(sys.argv) < 2:
+        print_help()
+    if sys.argv[1] not in ['runserver', 'generate', 'quickstart']:
         print_help()
 
     if sys.argv[1] == 'quickstart':
@@ -166,4 +168,4 @@ def run():
         sys.exit(manager.generate(outdir) or 0)
 
     else:
-        print_usage()
+        print_help()

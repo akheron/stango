@@ -4,6 +4,7 @@ def dict_merge(*args):
         result.update(d)
     return result
 
+
 class Context(object):
     def __init__(self, manager, mode, filespec):
         self.manager = manager

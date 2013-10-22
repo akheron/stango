@@ -7,6 +7,7 @@ from stango.files import Files
 
 STANGO_TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 
+
 class Stango(object):
     HOOK_NAMES = ['post_render_hook']
 
@@ -33,7 +34,7 @@ class Stango(object):
               isinstance(view_result.read, collections.Callable)):
             file_contents = view_result.read()
             if isinstance(file_contents, str):
-                 byte_result = file_contents.encode('utf-8')
+                byte_result = file_contents.encode('utf-8')
             elif isinstance(file_contents, (bytes, bytearray)):
                 byte_result = file_contents
             else:
