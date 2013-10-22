@@ -91,6 +91,7 @@ Available commands:
 CONFIG_DEFAULTS = {
     'autoreload': [],
     'index_file': None,
+    'jinja_extensions': [],
     'post_render_hook': None,
 }
 
@@ -128,6 +129,7 @@ def run():
     manager = Stango()
     manager.files = config['files']
     manager.index_file = config['index_file']
+    manager.jinja_extensions = config['jinja_extensions']
     manager.template_dirs.insert(0, 'templates')
 
     if config['post_render_hook']:

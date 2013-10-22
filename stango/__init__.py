@@ -13,8 +13,9 @@ class Stango(object):
     HOOK_NAMES = ['post_render_hook']
 
     def __init__(self):
-        self.index_file = None
         self.files = Files()
+        self.index_file = None
+        self.jinja_extensions = []
         self.template_dirs = [STANGO_TEMPLATE_DIR]
 
         # By default, all hooks return the data unmodified
@@ -25,7 +26,7 @@ class Stango(object):
     def jinja_env(self):
         from jinja2 import Environment, FileSystemLoader
         loader = FileSystemLoader(self.template_dirs)
-        return Environment(loader=loader)
+        return Environment(loader=loader, extensions=self.jinja_extensions)
 
     def view(self, filespec, mode):
         assert mode in ('generating', 'serving')
